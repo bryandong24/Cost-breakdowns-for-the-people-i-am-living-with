@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Cost Breakdown</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #5a67d8;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .option-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: visible;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .option-card.recommended {
+            border: 3px solid #48bb78;
+        }
+        
+        .option-card.recommended::before {
+            content: "BEST VALUE";
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: #48bb78;
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.8em;
+            font-weight: bold;
+            transform: rotate(45deg);
+        }
+        
+        .option-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .cost-item:last-of-type {
+            border-bottom: none;
+        }
+        
+        .cost-label {
+            color: #4a5568;
+        }
+        
+        .cost-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .total-cost {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .total-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .per-person {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 5px;
+        }
+        
+        .benefits {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            color: #48bb78;
+        }
+        
+        .benefit-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .warning {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: #742a2a;
+        }
+        
+        .comparison-chart {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .chart-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #2d3748;
+            text-align: center;
+        }
+        
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            margin: 30px 0;
+        }
+        
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .bar {
+            width: 80px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .bar:hover {
+            transform: scaleY(1.05);
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2d3748;
+        }
+        
+        .bar-label {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .summary h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .summary p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .savings-highlight {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ffd93d;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Transportation Cost Analysis</h1>
+        <p class="subtitle">Comparing car rental vs. alternative transportation options</p>
+        
+        <div class="comparison-chart">
+            <h2 class="chart-title">Cost Per Person Comparison</h2>
+            <div class="bar-chart">
+                <div class="bar-wrapper">
+                    <div class="bar" style="height: 71px;">
+                        <span class="bar-value">$35.60</span>
+                    </div>
+                    <span class="bar-label">Car Rental<br>(Split 5 ways)</span>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="bar" style="height: 162px; background: linear-gradient(to top, #fc8181, #f56565);">
+                        <span class="bar-value">$81.00</span>
+                    </div>
+                    <span class="bar-label">Alternative<br>(Full needs)</span>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="bar" style="height: 48px; background: linear-gradient(to top, #f6ad55, #ed8936);">
+                        <span class="bar-value">$24.00*</span>
+                    </div>
+                    <span class="bar-label">Minimal<br>(No storage/groceries)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="options-grid">
+            <div class="option-card recommended">
+                <h3 class="option-title">🚗 Car Rental Option</h3>
+                <div class="cost-item">
+                    <span class="cost-label">Bigger Car Rental</span>
+                    <span class="cost-value">$148.00</span>
+                </div>
+                <div class="cost-item">
+                    <span class="cost-label">Gas Estimate</span>
+                    <span class="cost-value">$30.00</span>
+                </div>
+                <div class="total-cost">
+                    <span class="total-label">Total Cost</span>
+                    <div>
+                        <div class="total-value" style="color: #48bb78;">$178.00</div>
+                        <div class="per-person">$35.60 per person</div>
+                    </div>
+                </div>
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">✓</span>
+                        <span>Unlimited trips</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">✓</span>
+                        <span>Storage locker access</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">✓</span>
+                        <span>Grocery shopping included</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">✓</span>
+                        <span>Mattress transport covered</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="option-card">
+                <h3 class="option-title">🚕 Alternative Options</h3>
+                <div class="cost-item">
+                    <span class="cost-label">Airport Uber</span>
+                    <span class="cost-value">$50.00</span>
+                </div>
+                <div class="cost-item">
+                    <span class="cost-label">Mattress Zipcar</span>
+                    <span class="cost-value">$11.00</span>
+                </div>
+                <div class="cost-item">
+                    <span class="cost-label">Storage Locker Trip</span>
+                    <span class="cost-value">$20.00</span>
+                </div>
+                <div class="total-cost">
+                    <span class="total-label">Total Cost</span>
+                    <div>
+                        <div class="total-value" style="color: #e53e3e;">$81.00</div>
+                        <div class="per-person">per person</div>
+                    </div>
+                </div>
+                <div class="warning">
+                    <strong>Note:</strong> This doesn't include additional trips or eating out costs due to lack of groceries!
+                </div>
+            </div>
+            
+            <div class="option-card">
+                <h3 class="option-title">🚆 Minimal Option</h3>
+                <div class="cost-item">
+                    <span class="cost-label">Caltrain from Airport</span>
+                    <span class="cost-value">$24.00</span>
+                </div>
+                <div class="cost-item">
+                    <span class="cost-label">Storage Access</span>
+                    <span class="cost-value" style="color: #e53e3e;">Not included</span>
+                </div>
+                <div class="cost-item">
+                    <span class="cost-label">Grocery Shopping</span>
+                    <span class="cost-value" style="color: #e53e3e;">Not included</span>
+                </div>
+                <div class="total-cost">
+                    <span class="total-label">Initial Cost</span>
+                    <div>
+                        <div class="total-value" style="color: #ed8936;">$24.00</div>
+                        <div class="per-person">per person</div>
+                    </div>
+                </div>
+                <div class="warning">
+                    <strong>Hidden costs:</strong> Eating out will quickly exceed the $11.60 "savings" + future storage trips cost $12 in gas each time
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <h2>💡 The Bottom Line</h2>
+            <p>The car rental saves you <span class="savings-highlight">$45.40 per person</span> compared to the full alternative option, while providing maximum flexibility and convenience.</p>
+            <p>Even the "minimal" option ends up costing more once you factor in eating out and future storage trips!</p>
+        </div>
+    </div>
+</body>
+</html>
