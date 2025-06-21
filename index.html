@@ -162,6 +162,7 @@
             padding: 30px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
+            overflow-x: auto;
         }
         
         .chart-title {
@@ -178,6 +179,7 @@
             align-items: flex-end;
             height: 200px;
             margin: 30px 0;
+            padding: 0 10px;
         }
         
         .bar-wrapper {
@@ -185,11 +187,13 @@
             flex-direction: column;
             align-items: center;
             flex: 1;
-            margin: 0 10px;
+            margin: 0 5px;
+            max-width: 120px;
         }
         
         .bar {
-            width: 80px;
+            width: 100%;
+            max-width: 80px;
             background: linear-gradient(to top, #667eea, #764ba2);
             border-radius: 5px 5px 0 0;
             position: relative;
@@ -241,6 +245,55 @@
             font-weight: bold;
             color: #ffd93d;
             margin: 15px 0;
+        }
+        
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .bar-chart {
+                height: 180px;
+                padding: 0 5px;
+            }
+            
+            .bar-wrapper {
+                margin: 0 2px;
+            }
+            
+            .bar-value {
+                font-size: 1em;
+                top: -25px;
+            }
+            
+            .bar-label {
+                font-size: 0.75em;
+            }
+            
+            .options-grid {
+                gap: 20px;
+            }
+            
+            .option-card {
+                padding: 20px;
+            }
+            
+            .chart-title {
+                font-size: 1.2em;
+                margin-bottom: 30px;
+            }
+            
+            .comparison-chart {
+                padding: 20px 15px;
+            }
         }
     </style>
 </head>
